@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { db } from './firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import './Homepage.css';
+import logo from './assets/logo.png'; // Import the logo
 
 function Homepage() {
     const navigate = useNavigate();
@@ -65,7 +66,7 @@ function Homepage() {
     return (
         <div id="root">
             <div className="header">
-                <img src="" alt="Logo" className="logo" />
+                <img src={logo} alt="Logo" className="logo" /> {/* Use the imported logo */}
                 <img src="" alt="Profile" className="profile-photo" />
             </div>
             <div className="activities">
