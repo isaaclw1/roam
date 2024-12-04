@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db } from './firebase';
 import { collection, query, where, getDocs, deleteDoc, doc } from 'firebase/firestore';
-import { auth } from './firebase'; // Import Firebase Auth
+import { auth } from './firebase';
 import './Homepage.css';
 import logo from './assets/logo.png'; // Import the logo
 
@@ -11,6 +11,7 @@ function Homepage() {
     const [activities, setActivities] = useState([]);
     const [selectedCities, setSelectedCities] = useState([]);
     const [selectedInterests, setSelectedInterests] = useState([]);
+    const [selectedActivity, setSelectedActivity] = useState(null); // Track the selected activity for the popup
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -61,7 +62,7 @@ function Homepage() {
 
                 const interestsData = interestsSnapshot.docs
                     .flatMap((doc) => doc.data().selectedActivities)
-                    .filter((interest, index, self) => self.indexOf(interest) === index); // Filter for unique interests
+                    .filter((interest, index, self) => self.indexOf(interest) === index);
 
                 setSelectedInterests(interestsData);
             } catch (error) {
@@ -87,6 +88,14 @@ function Homepage() {
         }
     };
 
+    const handleActivityClick = (activity) => {
+        setSelectedActivity(activity);
+    };
+
+    const closeModal = () => {
+        setSelectedActivity(null);
+    };
+
     return (
         <div className="homepage">
             <div className="homepage-container">
@@ -94,11 +103,10 @@ function Homepage() {
                     <img src={logo} alt="Logo" className="logo" />
                 </div>
 
+                {/* Selected Cities Section */}
                 <h2>Your Selected Cities</h2>
                 {selectedCities.length === 0 ? (
-                    <div className="no-cities-message">
-                        You currently don't have any selected cities!
-                    </div>
+                    <div className="no-cities-message">You currently don't have any selected cities!</div>
                 ) : (
                     <div className="selection-list">
                         {selectedCities.map((city, index) => (
@@ -109,11 +117,10 @@ function Homepage() {
                     </div>
                 )}
 
+                {/* Selected Interests Section */}
                 <h2>Your Selected Interests</h2>
                 {selectedInterests.length === 0 ? (
-                    <div className="no-interests-message">
-                        You currently don't have any selected interests!
-                    </div>
+                    <div className="no-interests-message">You currently don't have any selected interests!</div>
                 ) : (
                     <div className="selection-list">
                         {selectedInterests.map((interest, index) => (
@@ -124,35 +131,59 @@ function Homepage() {
                     </div>
                 )}
 
+                {/* Activities Section */}
                 <h2>Your Activities</h2>
-                {activities.length === 0 ? (
-                    <div className="no-activities-message">
-                        You currently don't have any activities added!
-                    </div>
-                ) : (
-                    <div className="activity-selection-options">
-                        {activities.map((activity) => (
-                            <div
-                                key={activity.id}
-                                id={activity.id}
-                                className="activity-selection-option"
+                <div className="activity-selection-options">
+                    {activities.map((activity) => (
+                        <div
+                            key={activity.id}
+                            id={activity.id}
+                            className="activity-selection-option"
+                            onClick={() => handleActivityClick(activity)}
+                        >
+                            <img src={activity.image || ''} alt={activity.name} />
+                            <p>{activity.name}</p>
+                            <button
+                                className="delete-button"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDeleteActivity(activity.id);
+                                }}
                             >
-                                <img src={activity.image || ''} alt={activity.name} />
-                                <p>{activity.name}</p>
-                                <button
-                                    className="delete-button"
-                                    onClick={() => handleDeleteActivity(activity.id)}
-                                >
-                                    Delete
-                                </button>
-                            </div>
-                        ))}
-                    </div>
-                )}
+                                Delete
+                            </button>
+                        </div>
+                    ))}
+                </div>
                 <button className="homepage-button" onClick={handleAddActivity}>
                     Add Activity
                 </button>
             </div>
+
+            {/* Modal for displaying activity details */}
+            {selectedActivity && (
+                <div className="modal-overlay" onClick={closeModal}>
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                        <h2>{selectedActivity.name}</h2>
+                        <p>
+                            <strong>Location:</strong> {selectedActivity.city}
+                        </p>
+                        <p>
+                            <strong>Description:</strong> {selectedActivity.description}
+                        </p>
+                        <p>
+                            <strong>Tags:</strong> {selectedActivity.type.join(', ')}
+                        </p>
+                        <p>
+                            <strong>Estimated Cost:</strong> ${selectedActivity.estimatedCost}
+                        </p>
+                        <img src={selectedActivity.image || ''} alt={selectedActivity.name} />
+                        <button onClick={closeModal} className="modal-close-button">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

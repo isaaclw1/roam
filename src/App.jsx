@@ -26,13 +26,13 @@ function App() {
             const interestsQuery = query(interestsRef, where('userId', '==', user.uid));
             const interestsSnapshot = await getDocs(interestsQuery);
 
-            // if (!interestsSnapshot.empty) {
-            //     // Navigate to homepage if entries exist
-            //     navigate('/homepage');
-            // } else {
-            //     // Navigate to profile setup if no entries exist
+            if (!interestsSnapshot.empty) {
+                // Navigate to homepage if entries exist
+                navigate('/homepage');
+            } else {
+                // Navigate to profile setup if no entries exist
                 navigate('/profile-setup');
-            // }
+            }
         } catch (error) {
             console.error('Login failed:', error);
         }

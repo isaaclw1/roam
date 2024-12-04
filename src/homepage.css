@@ -13,24 +13,22 @@
     width: 400px;
     background: linear-gradient(180deg, #b5b0e1, #f0f0f0);
     border-radius: 15px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* Adds shadow for emphasis */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
     text-align: center;
     padding: 20px;
-    
 }
 
 .homepage-container h2 {
     font-size: 1.4rem;
     font-weight: bold;
-    color: #333333; /* Darker text color for contrast */
-    margin: 0;
-    padding-bottom: 10px;
+    color: #333;
+    margin: 0 0 10px;
     background-color: transparent;
 }
 
 .homepage-container p {
     font-size: 0.9rem;
-    color: #666666;
+    color: #666;
     margin-bottom: 20px;
 }
 
@@ -41,17 +39,19 @@
     margin: 20px 0;
 }
 
+/* Activity Selection Styling */
 .activity-selection-options {
     display: flex;
     flex-direction: column;
     gap: 15px;
 }
+
 .activity-selection-option {
     position: relative;
     cursor: pointer;
     border-radius: 10px;
     overflow: hidden;
-    border: 1px solid #e0e0e0; /* Subtle border for individual items */
+    border: 1px solid #e0e0e0;
     text-align: center;
     width: 100%;
 }
@@ -60,7 +60,7 @@
     width: 100%;
     height: 120px;
     object-fit: cover;
-    display: block; /* Removes inline spacing below the image */
+    display: block;
 }
 
 .activity-selection-option p {
@@ -74,16 +74,17 @@
 }
 
 .delete-button {
-    position: absolute; /* Position over the image */
-    top: 10px; /* Align towards the top of the image */
-    right: 10px; /* Align to the right */
-    padding: 5px 10px;
-    background: rgba(255, 77, 77, 0.9); /* Semi-transparent red */
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255, 77, 77, 0.9);
     color: white;
     border: none;
+    padding: 5px 10px;
     border-radius: 5px;
     font-size: 0.8rem;
     cursor: pointer;
+    z-index: 2;
     transition: background 0.3s;
 }
 
@@ -105,5 +106,53 @@
 }
 
 .homepage-button:hover {
+    background: #6c1bb4;
+}
+
+/* Modal Styling */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    max-width: 500px;
+    width: 90%;
+    text-align: center;
+    position: relative;
+}
+
+.modal-content img {
+    max-width: 100%;
+    border-radius: 10px;
+    margin: 10px 0;
+}
+
+.modal-close-button {
+    background: #8a2be2;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin: 20px auto 0;
+    display: block; /* Centers the button horizontally */
+    transition: background 0.3s;
+}
+
+.modal-close-button:hover {
     background: #6c1bb4;
 }
