@@ -1,100 +1,98 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { db } from './firebase';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { collection, query, where, getDocs, deleteDoc, doc } from 'firebase/firestore';
+import { auth } from './firebase'; // Import Firebase Auth
 import './Homepage.css';
 import logo from './assets/logo.png'; // Import the logo
 
 function Homepage() {
     const navigate = useNavigate();
-    const location = useLocation();
-    const { selectedCities, selectedActivities, newActivityId } = location.state || {};
     const [activities, setActivities] = useState([]);
 
     useEffect(() => {
-        const fetchActivities = async () => {
+        const fetchUserActivities = async () => {
             try {
+                const currentUser = auth.currentUser;
+
+                if (!currentUser) {
+                    alert('Please log in to view your activities.');
+                    navigate('/login');
+                    return;
+                }
+
                 const activitiesRef = collection(db, 'activities');
-                let q = query(
-                    activitiesRef,
-                    where('city', 'in', selectedCities || []),
-                    where('type', 'array-contains-any', selectedActivities || [])
-                );
+                const q = query(activitiesRef, where('userId', '==', currentUser.uid)); // Filter by userId
 
                 const querySnapshot = await getDocs(q);
-                const activitiesData = querySnapshot.docs.map(doc => ({
+                const activitiesData = querySnapshot.docs.map((doc) => ({
                     id: doc.id,
-                    ...doc.data()
+                    ...doc.data(),
                 }));
 
-                // Sort activities to show newest first
                 activitiesData.sort((a, b) =>
                     new Date(b.createdAt) - new Date(a.createdAt)
                 );
 
                 setActivities(activitiesData);
-
-                // If there's a new activity, scroll it into view
-                if (newActivityId) {
-                    setTimeout(() => {
-                        const element = document.getElementById(newActivityId);
-                        if (element) {
-                            element.scrollIntoView({ behavior: 'smooth' });
-                        }
-                    }, 100);
-                }
             } catch (error) {
                 console.error('Error fetching activities:', error);
             }
         };
 
-        if (selectedCities?.length && selectedActivities?.length) {
-            fetchActivities();
-        }
-    }, [selectedCities, selectedActivities, newActivityId]);
-
-    const handleViewActivity = (activityId) => {
-        navigate(`/view-activity/${activityId}`);
-    };
+        fetchUserActivities();
+    }, [navigate]);
 
     const handleAddActivity = () => {
-        navigate('/add-activity', {
-            state: { selectedCities, selectedActivities }
-        });
+        navigate('/add-activity');
+    };
+
+    const handleDeleteActivity = async (activityId) => {
+        try {
+            await deleteDoc(doc(db, 'activities', activityId));
+            setActivities((prev) => prev.filter((activity) => activity.id !== activityId));
+            alert('Activity deleted successfully.');
+        } catch (error) {
+            console.error('Error deleting activity:', error);
+            alert('Failed to delete activity. Please try again.');
+        }
     };
 
     return (
-        <div id="root">
-            <div className="header">
-                <img src={logo} alt="Logo" className="logo" /> {/* Use the imported logo */}
-                <img src="" alt="Profile" className="profile-photo" />
-            </div>
-            <div className="activities">
-                {activities.map((activity) => (
-                    <div
-                        key={activity.id}
-                        id={activity.id}
-                        className={`activity-card ${activity.id === newActivityId ? 'highlight' : ''}`}
-                        onClick={() => handleViewActivity(activity.id)}
-                    >
-                        <img src={activity.image || ''} alt={activity.name} />
-                        <div className="activity-info">
-                            <h3>{activity.name}</h3>
-                            <div className="tags">
-                                {activity.type.map((tag, index) => (
-                                    <span key={index} className="tag">
-                                        {tag}
-                                    </span>
-                                ))}
-                            </div>
-                            <p className="location">{activity.city}</p>
-                        </div>
+        <div className="homepage">
+            <div className="homepage-container">
+                <div className="header">
+                    <img src={logo} alt="Logo" className="logo" />
+                </div>
+                <h2>Your Activities</h2>
+                {activities.length === 0 ? (
+                    <div className="no-activities-message">
+                        You currently don't have any activities added!
                     </div>
-                ))}
+                ) : (
+                    <div className="activity-selection-options">
+                        {activities.map((activity) => (
+                            <div
+                                key={activity.id}
+                                id={activity.id}
+                                className="activity-selection-option"
+                            >
+                                <img src={activity.image || ''} alt={activity.name} />
+                                <p>{activity.name}</p>
+                                <button
+                                    className="delete-button"
+                                    onClick={() => handleDeleteActivity(activity.id)}
+                                >
+                                    Delete
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                )}
+                <button className="homepage-button" onClick={handleAddActivity}>
+                    Add Activity
+                </button>
             </div>
-            <button className="add-activity-button" onClick={handleAddActivity}>
-                Add Activity
-            </button>
         </div>
     );
 }

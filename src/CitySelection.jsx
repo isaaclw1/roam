@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { db } from './firebase'; // Ensure Firebase is properly configured
+import { collection, addDoc } from 'firebase/firestore';
+import { auth } from './firebase'; // Firebase Auth
 import './CitySelection.css';
 
 function CitySelection() {
@@ -18,9 +21,29 @@ function CitySelection() {
         );
     };
 
-    const handleNext = () => {
+    const handleNext = async () => {
         if (selectedCities.length > 0) {
-            navigate('/activity-selection', { state: { selectedCities } });
+            try {
+                const currentUser = auth.currentUser;
+
+                if (!currentUser) {
+                    alert('Please log in to proceed.');
+                    navigate('/login');
+                    return;
+                }
+
+                const citySelectionRef = collection(db, 'cityselection');
+                await addDoc(citySelectionRef, {
+                    userId: currentUser.uid,
+                    selectedCities,
+                    timestamp: new Date(), // Add a timestamp for record keeping
+                });
+
+                navigate('/activity-selection', { state: { selectedCities } });
+            } catch (error) {
+                console.error('Error saving selected cities:', error);
+                alert('Failed to save selected cities. Please try again.');
+            }
         } else {
             alert('Please select at least one city.');
         }

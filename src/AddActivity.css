@@ -1,17 +1,20 @@
 .add-activity {
     padding: 2rem;
-    max-width: 500px; /* Adjusted width to avoid overflow */
+    max-width: 400px; /* Match width with Homepage */
     margin: 0 auto;
-    background: linear-gradient(180deg, #b5b0e1, #f0f0f0);
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    color: #fff; /* Adjusted text color */
+    background: linear-gradient(180deg, #b5b0e1, #f0f0f0); /* Similar background as Homepage */
+    border-radius: 15px; /* Consistent border-radius */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Match shadow with Homepage */
+    color: #333; /* Updated text color for better readability */
     overflow: hidden; /* Prevent any child elements from overflowing */
+    text-align: center; /* Center-align text */
+    font-family: 'Arial', sans-serif;
 }
 
 .form-group {
     margin-bottom: 1.5rem;
     width: 100%; /* Ensures inputs fit within the parent */
+    text-align: left; /* Align labels to the left */
 }
 
 .input-field,
@@ -50,8 +53,7 @@
 .submit-button {
     width: 100%;
     padding: 1rem;
-    background-color:#8a2be2;
-    ;
+    background-color: #8a2be2; /* Match button color with Homepage */
     color: white;
     border: none;
     border-radius: 6px;
@@ -61,12 +63,26 @@
 }
 
 .submit-button:hover {
-    background-color: #155ab2;
+    background-color: #6c1bb4; /* Consistent hover effect */
 }
 
 .input-field:focus,
 .select-field:focus,
 .textarea-field:focus {
     outline: none;
-    border-color: #1a73e8;
+    border-color: #1a73e8; /* Focus effect for better usability */
+}
+
+/* Optional: Add consistent title styling */
+.add-activity h2 {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.add-activity p {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 1.5rem;
 }

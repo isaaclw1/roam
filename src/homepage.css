@@ -1,130 +1,109 @@
-#root {
-    max-width: 1200px;
-    margin: 0 auto;
+/* General Homepage Styling */
+.homepage {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: transparent;
+    font-family: 'Arial', sans-serif;
     padding: 20px;
 }
 
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 0;
-    margin-bottom: 2rem;
+.homepage-container {
+    width: 400px;
+    background: linear-gradient(180deg, #b5b0e1, #f0f0f0);
+    border-radius: 15px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* Adds shadow for emphasis */
+    text-align: center;
+    padding: 20px;
+    
 }
 
-.logo {
-    height: 40px;
-    width: auto;
-}
-
-.profile-photo {
-    height: 40px;
-    width: 40px;
-    border-radius: 50%;
-    object-fit: cover;
-}
-
-.activities {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 2rem;
-    margin-bottom: 2rem;
-}
-
-.activity-card {
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    background-color: white;
-    cursor: pointer;
-}
-
-.activity-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-}
-
-.activity-card img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-}
-
-.activity-info {
-    padding: 1.5rem;
-}
-
-.activity-info h3 {
-    margin: 0 0 1rem 0;
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #333;
-}
-
-.tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-}
-
-.tag {
-    background-color: #f0f0f0;
-    padding: 0.4rem 0.8rem;
-    border-radius: 16px;
-    font-size: 0.875rem;
-    color: #666;
-}
-
-.location {
-    color: #666;
-    font-size: 0.875rem;
+.homepage-container h2 {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #333333; /* Darker text color for contrast */
     margin: 0;
+    padding-bottom: 10px;
+    background-color: transparent;
 }
 
-.add-activity-button {
-    position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-    background-color: #1a73e8;
-    color: white;
-    padding: 1rem 2rem;
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 500;
+.homepage-container p {
+    font-size: 0.9rem;
+    color: #666666;
+    margin-bottom: 20px;
+}
+
+.no-activities-message {
+    text-align: center;
+    color: #666;
+    font-size: 1.2rem;
+    margin: 20px 0;
+}
+
+.activity-selection-options {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.activity-selection-option {
+    position: relative;
     cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.2s ease, transform 0.2s ease;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #e0e0e0; /* Subtle border for individual items */
+    text-align: center;
+    width: 100%;
 }
 
-.add-activity-button:hover {
-    background-color: #1557b0;
-    transform: translateY(-2px);
+.activity-selection-option img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    display: block; /* Removes inline spacing below the image */
 }
 
-.highlight {
-    animation: highlightFade 2s ease-out;
+.activity-selection-option p {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    color: white;
+    font-weight: bold;
+    font-size: 1rem;
+    text-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
 }
 
-@keyframes highlightFade {
-    0% {
-        box-shadow: 0 0 0 4px #1a73e8;
-    }
-    100% {
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
+.delete-button {
+    position: absolute; /* Position over the image */
+    top: 10px; /* Align towards the top of the image */
+    right: 10px; /* Align to the right */
+    padding: 5px 10px;
+    background: rgba(255, 77, 77, 0.9); /* Semi-transparent red */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: background 0.3s;
 }
 
-@media (max-width: 768px) {
-    .activities {
-        grid-template-columns: 1fr;
-    }
+.delete-button:hover {
+    background: rgba(230, 57, 57, 0.9);
+}
 
-    .add-activity-button {
-        bottom: 1rem;
-        right: 1rem;
-        padding: 0.8rem 1.5rem;
-    }
+.homepage-button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 15px;
+    background: #8a2be2;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.homepage-button:hover {
+    background: #6c1bb4;
 }
