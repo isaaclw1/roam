@@ -1,86 +1,96 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db } from './firebase';
-import { collection, query, where, getDocs, deleteDoc, doc } from 'firebase/firestore';
+import { collection, query, getDocs } from 'firebase/firestore';
 import { auth } from './firebase';
 import './Homepage.css';
-import logo from './assets/logo.png'; // Import the logo
+import logo from './assets/logo.png';
 
 function Homepage() {
     const navigate = useNavigate();
     const [activities, setActivities] = useState([]);
     const [selectedCities, setSelectedCities] = useState([]);
     const [selectedInterests, setSelectedInterests] = useState([]);
-    const [selectedActivity, setSelectedActivity] = useState(null); // Track the selected activity for the popup
+    const [selectedActivity, setSelectedActivity] = useState(null);
+    const [filteredActivities, setFilteredActivities] = useState([]);
 
     useEffect(() => {
-        const fetchUserData = async () => {
+        const fetchData = async () => {
             try {
                 const currentUser = auth.currentUser;
 
                 if (!currentUser) {
-                    alert('Please log in to view your data.');
+                    alert('Please log in to view activities.');
                     navigate('/');
                     return;
                 }
 
-                // Fetch Activities
-                const activitiesRef = collection(db, 'activities');
-                const activitiesQuery = query(activitiesRef, where('userId', '==', currentUser.uid));
-                const activitiesSnapshot = await getDocs(activitiesQuery);
+                // Fetch user's selected cities
+                const citiesRef = collection(db, 'cityselection');
+                const citiesSnapshot = await getDocs(query(citiesRef));
+                const userCitiesDoc = citiesSnapshot.docs.find(doc => doc.data().userId === currentUser.uid);
+                const citiesData = userCitiesDoc ? userCitiesDoc.data().selectedCities : [];
+                setSelectedCities(citiesData);
 
-                const activitiesData = activitiesSnapshot.docs.map((doc) => ({
+                // Fetch user's interests
+                const interestsRef = collection(db, 'interests');
+                const interestsSnapshot = await getDocs(query(interestsRef));
+                const userInterestsDoc = interestsSnapshot.docs.find(doc => doc.data().userId === currentUser.uid);
+                const interestsData = userInterestsDoc ? userInterestsDoc.data().selectedActivities : [];
+                setSelectedInterests(interestsData);
+
+                // Fetch ALL activities
+                const activitiesRef = collection(db, 'activities');
+                const activitiesSnapshot = await getDocs(query(activitiesRef));
+                const activitiesData = activitiesSnapshot.docs.map(doc => ({
                     id: doc.id,
                     ...doc.data(),
                 }));
 
-                activitiesData.sort((a, b) =>
-                    new Date(b.createdAt) - new Date(a.createdAt)
-                );
-
                 setActivities(activitiesData);
-
-                // Fetch Selected Cities
-                const citiesRef = collection(db, 'cityselection');
-                const citiesQuery = query(citiesRef, where('userId', '==', currentUser.uid));
-                const citiesSnapshot = await getDocs(citiesQuery);
-
-                const citiesData = Array.from(
-                    new Set(
-                        citiesSnapshot.docs
-                            .map((doc) => doc.data().selectedCities)
-                            .flat()
-                    )
-                );
-
-                setSelectedCities(citiesData);
-
-                // Fetch Selected Interests
-                const interestsRef = collection(db, 'interests');
-                const interestsQuery = query(interestsRef, where('userId', '==', currentUser.uid));
-                const interestsSnapshot = await getDocs(interestsQuery);
-
-                const interestsData = interestsSnapshot.docs
-                    .flatMap((doc) => doc.data().selectedActivities)
-                    .filter((interest, index, self) => self.indexOf(interest) === index);
-
-                setSelectedInterests(interestsData);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
         };
 
-        fetchUserData();
+        fetchData();
     }, [navigate]);
+
+    // Filter activities whenever the activities list or user preferences change
+    useEffect(() => {
+        const filterActivities = () => {
+            const filtered = activities.filter(activity => {
+                const cityMatch = selectedCities.includes(activity.city);
+                const interestMatch = activity.type.some(type =>
+                    selectedInterests.includes(type)
+                );
+                return cityMatch && interestMatch;
+            });
+
+            filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            setFilteredActivities(filtered);
+        };
+
+        filterActivities();
+    }, [activities, selectedCities, selectedInterests]);
 
     const handleAddActivity = () => {
         navigate('/add-activity');
     };
 
     const handleDeleteActivity = async (activityId) => {
+        // Only allow deletion if the activity belongs to the current user
+        const currentUser = auth.currentUser;
+        const activityToDelete = activities.find(a => a.id === activityId);
+
+        if (activityToDelete?.userId !== currentUser.uid) {
+            alert('You can only delete activities that you created.');
+            return;
+        }
+
         try {
             await deleteDoc(doc(db, 'activities', activityId));
-            setActivities((prev) => prev.filter((activity) => activity.id !== activityId));
+            setActivities(prev => prev.filter(activity => activity.id !== activityId));
             alert('Activity deleted successfully.');
         } catch (error) {
             console.error('Error deleting activity:', error);
@@ -131,30 +141,27 @@ function Homepage() {
                     </div>
                 )}
 
-                {/* Activities Section */}
-                <h2>Your Activities</h2>
-                <div className="activity-selection-options">
-                    {activities.map((activity) => (
-                        <div
-                            key={activity.id}
-                            id={activity.id}
-                            className="activity-selection-option"
-                            onClick={() => handleActivityClick(activity)}
-                        >
-                            <img src={activity.image || ''} alt={activity.name} />
-                            <p>{activity.name}</p>
-                            <button
-                                className="delete-button"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleDeleteActivity(activity.id);
-                                }}
+                {/* Matched Activities Section */}
+                <h2>Matching Activities</h2>
+                {filteredActivities.length === 0 ? (
+                    <div className="no-activities-message">
+                        No activities found matching your cities and interests.
+                    </div>
+                ) : (
+                    <div className="activity-selection-options">
+                        {filteredActivities.map((activity) => (
+                            <div
+                                key={activity.id}
+                                id={activity.id}
+                                className="activity-selection-option"
+                                onClick={() => handleActivityClick(activity)}
                             >
-                                Delete
-                            </button>
-                        </div>
-                    ))}
-                </div>
+                                <img src={activity.image || ''} alt={activity.name} />
+                                <p>{activity.name}</p>
+                            </div>
+                        ))}
+                    </div>
+                )}
                 <button className="homepage-button" onClick={handleAddActivity}>
                     Add Activity
                 </button>
@@ -176,6 +183,9 @@ function Homepage() {
                         </p>
                         <p>
                             <strong>Estimated Cost:</strong> ${selectedActivity.estimatedCost}
+                        </p>
+                        <p>
+                            <strong>Added by:</strong> {selectedActivity.userId === auth.currentUser?.uid ? 'You' : 'Another user'}
                         </p>
                         <img src={selectedActivity.image || ''} alt={selectedActivity.name} />
                         <button onClick={closeModal} className="modal-close-button">
