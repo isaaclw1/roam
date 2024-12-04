@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { db } from './firebase'; // Ensure Firebase is properly configured
+import { collection, addDoc } from 'firebase/firestore';
+import { auth } from './firebase'; // Import Firebase Auth
 import './ActivitySelection.css';
 
 function ActivitySelection() {
@@ -24,9 +27,30 @@ function ActivitySelection() {
         );
     };
 
-    const handleNext = () => {
+    const handleNext = async () => {
         if (selectedActivities.length >= 3) {
-            navigate('/homepage', { state: { selectedCities, selectedActivities } });
+            try {
+                const currentUser = auth.currentUser;
+
+                if (!currentUser) {
+                    alert('Please log in to save your interests.');
+                    navigate('/login');
+                    return;
+                }
+
+                const interestsRef = collection(db, 'interests');
+                await addDoc(interestsRef, {
+                    userId: currentUser.uid,
+                    selectedCities,
+                    selectedActivities,
+                    timestamp: new Date(), // Add a timestamp for record keeping
+                });
+
+                navigate('/homepage', { state: { selectedCities, selectedActivities } });
+            } catch (error) {
+                console.error('Error saving selected activities:', error);
+                alert('Failed to save selected activities. Please try again.');
+            }
         } else {
             alert('Please select at least 3 activities.');
         }

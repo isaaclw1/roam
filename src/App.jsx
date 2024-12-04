@@ -1,6 +1,7 @@
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
-import { auth } from './firebase';
+import { auth, db } from './firebase'; // Ensure Firestore is properly configured
+import { collection, query, where, getDocs } from 'firebase/firestore';
 import './App.css';
 import logo from './assets/logo.png';
 import logoname from './assets/logoname.png';
@@ -17,8 +18,21 @@ function App() {
         try {
             const result = await signInWithPopup(auth, provider);
             const user = result.user;
+
             console.log('Logged in user:', user);
-            navigate('/profile-setup'); // Redirect to ProfileSetup
+
+            // Check if user has entries in the "interests" collection
+            const interestsRef = collection(db, 'interests');
+            const interestsQuery = query(interestsRef, where('userId', '==', user.uid));
+            const interestsSnapshot = await getDocs(interestsQuery);
+
+            // if (!interestsSnapshot.empty) {
+            //     // Navigate to homepage if entries exist
+            //     navigate('/homepage');
+            // } else {
+            //     // Navigate to profile setup if no entries exist
+                navigate('/profile-setup');
+            // }
         } catch (error) {
             console.error('Login failed:', error);
         }

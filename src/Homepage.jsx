@@ -9,23 +9,25 @@ import logo from './assets/logo.png'; // Import the logo
 function Homepage() {
     const navigate = useNavigate();
     const [activities, setActivities] = useState([]);
+    const [selectedCities, setSelectedCities] = useState([]);
 
     useEffect(() => {
-        const fetchUserActivities = async () => {
+        const fetchUserData = async () => {
             try {
                 const currentUser = auth.currentUser;
 
                 if (!currentUser) {
-                    alert('Please log in to view your activities.');
-                    navigate('/login');
+                    alert('Please log in to view your data.');
+                    navigate('/');
                     return;
                 }
 
+                // Fetch Activities
                 const activitiesRef = collection(db, 'activities');
-                const q = query(activitiesRef, where('userId', '==', currentUser.uid)); // Filter by userId
+                const activitiesQuery = query(activitiesRef, where('userId', '==', currentUser.uid));
+                const activitiesSnapshot = await getDocs(activitiesQuery);
 
-                const querySnapshot = await getDocs(q);
-                const activitiesData = querySnapshot.docs.map((doc) => ({
+                const activitiesData = activitiesSnapshot.docs.map((doc) => ({
                     id: doc.id,
                     ...doc.data(),
                 }));
@@ -35,12 +37,28 @@ function Homepage() {
                 );
 
                 setActivities(activitiesData);
+
+                // Fetch Selected Cities
+                const citiesRef = collection(db, 'cityselection');
+                const citiesQuery = query(citiesRef, where('userId', '==', currentUser.uid));
+                const citiesSnapshot = await getDocs(citiesQuery);
+
+                // Flatten and filter for unique cities
+                const citiesData = Array.from(
+                    new Set(
+                        citiesSnapshot.docs
+                            .map((doc) => doc.data().selectedCities)
+                            .flat()
+                    )
+                );
+
+                setSelectedCities(citiesData);
             } catch (error) {
-                console.error('Error fetching activities:', error);
+                console.error('Error fetching data:', error);
             }
         };
 
-        fetchUserActivities();
+        fetchUserData();
     }, [navigate]);
 
     const handleAddActivity = () => {
@@ -64,6 +82,22 @@ function Homepage() {
                 <div className="header">
                     <img src={logo} alt="Logo" className="logo" />
                 </div>
+
+                <h2>Your Selected Cities</h2>
+                {selectedCities.length === 0 ? (
+                    <div className="no-cities-message">
+                        You currently don't have any selected cities!
+                    </div>
+                ) : (
+                    <div className="city-selection-list">
+                        {selectedCities.map((city, index) => (
+                            <div key={index} className="city-selection-item">
+                                <p>{city}</p>
+                            </div>
+                        ))}
+                    </div>
+                )}
+
                 <h2>Your Activities</h2>
                 {activities.length === 0 ? (
                     <div className="no-activities-message">
