@@ -1,0 +1,59 @@
+body {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: url('./assets/map.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
+
+#root {
+  max-width: 600px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  height: 60px;
+}
+
+.logoname {
+  width: 200px;
+  margin: 0 auto 2rem;
+}
+
+button {
+  margin-top: 1rem;
+  width: 100%;
+  padding: 0.8rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  background-color: #1a73e8;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #155ab2;
+}
+
+button.google {
+  background-color: #db4437;
+}
+
+button.google:hover {
+  background-color: #a9372c;
+}
