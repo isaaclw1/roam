@@ -4,6 +4,9 @@ import { auth } from './firebase';
 import './App.css';
 import logo from './assets/logo.png';
 import logoname from './assets/logoname.png';
+import random1 from './assets/random1.png';
+import random2 from './assets/random2.png';
+import random3 from './assets/random3.png';
 
 function App() {
     const navigate = useNavigate();
@@ -22,14 +25,33 @@ function App() {
     };
 
     return (
-        <div id="root">
-            <img src={logo} className="logo" alt="ROAM Logo" />
-            <img src={logoname} className="logoname" alt="ROAM Name" />
-            <button onClick={() => alert('Login clicked')}>Login</button>
-            <button onClick={() => alert('Sign in clicked')}>Sign In</button>
-            <button className="google" onClick={handleGoogleLogin}>
-                Log in with Google
-            </button>
+        <div id="app-container">
+            <div className="floating-images">
+                <div className="floating-image" style={{ top: '10%', left: '5%' }}>
+                    <img src={random1} alt="Activity 1" />
+                </div>
+                <div className="floating-image" style={{ top: '50%', right: '10%' }}>
+                    <img src={random2} alt="Activity 2" />
+                </div>
+                <div className="floating-image" style={{ bottom: '15%', left: '20%' }}>
+                    <img src={random3} alt="Activity 3" />
+                </div>
+            </div>
+            <div className="header">
+                <img src={logo} className="logo" alt="ROAM Logo" />
+                <img src={logoname} className="logoname" alt="ROAM Name" />
+            </div>
+            <div className="button-container">
+                <button onClick={() => alert('Login clicked')} className="btn primary">
+                    Login
+                </button>
+                <button onClick={() => alert('Sign in clicked')} className="btn secondary">
+                    Sign Up
+                </button>
+                <button className="btn google" onClick={handleGoogleLogin}>
+                    Log in with Google
+                </button>
+            </div>
         </div>
     );
 }

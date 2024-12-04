@@ -1,0 +1,81 @@
+
+
+/* Card styling */
+.profile-setup-card {
+    background: linear-gradient(135deg, #ffffff, #d6c9f3);
+    border-radius: 25px;
+    padding: 20px;
+    width: 300px;
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    position: relative;
+}
+
+/* Header text */
+.profile-setup-header {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333333;
+    margin-bottom: 10px;
+}
+
+/* Subtext styling */
+.profile-setup-text {
+    font-size: 1rem;
+    color: #555555;
+    margin-bottom: 20px;
+}
+
+/* Skip button styling */
+.profile-setup-skip {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 0.85rem;
+    background: none;
+    border: 1px solid #888888;
+    color: #888888;
+    border-radius: 15px;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.profile-setup-skip:hover {
+    background-color: #f0f0f0;
+    border-color: #555555;
+}
+
+/* Start setup button */
+.profile-setup-button {
+    background-color: #1a1a1a;
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 15px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.profile-setup-button:hover {
+    background-color: #1a1a1a;
+    transform: scale(1.05);
+}
+
+.profile-setup-button:active {
+    transform: scale(1);
+}
+
+/* Responsive design */
+@media (max-width: 400px) {
+    .profile-setup-card {
+        width: 90%;
+        padding: 15px;
+    }
+
+    .profile-setup-header {
+        font-size: 1.25rem;
+    }
+}

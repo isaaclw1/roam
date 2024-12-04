@@ -1,223 +1,127 @@
+/* General Styling */
 body {
   margin: 0;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  font-family: 'Inter', sans-serif;
   background-image: url('./assets/map.jpg');
   background-size: cover;
   background-repeat: no-repeat;
   min-height: 100vh;
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 }
 
-#root {
+/* App Container */
+#app-container {
+  text-align: center;
   max-width: 600px;
   width: 100%;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.85);
   padding: 2rem;
-  text-align: center;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  position: relative;
+  z-index: 2;
 }
 
+/* Header */
 .logo {
+  width: 60px;
   position: absolute;
   top: 20px;
   left: 20px;
-  height: 60px;
 }
 
 .logoname {
   width: 200px;
-  margin: 0 auto 2rem;
+  margin: 0 auto;
+  margin-bottom: 2rem;
 }
 
-button {
-  margin-top: 1rem;
-  width: 100%;
-  padding: 0.8rem;
-  border: none;
-  border-radius: 6px;
-  font-size: 1.2rem;
-  font-weight: bold;
-  cursor: pointer;
-  background-color: #1a73e8;
-  color: white;
-  transition: background-color 0.3s ease;
-}
-
-button:hover {
-  background-color: #155ab2;
-}
-
-button.google {
-  background-color: #db4437;
-}
-
-button.google:hover {
-  background-color: #a9372c;
-}
-
-
-.options {
+/* Buttons */
+.button-container {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  flex-direction: column;
   gap: 1rem;
 }
 
-.option {
-  width: 150px;
-  height: 150px;
-  border: 2px solid transparent;
-  border-radius: 10px;
-  overflow: hidden;
-  cursor: pointer;
-  text-align: center;
-  transition: border-color 0.3s;
-}
-
-.option img {
-  width: 100%;
-  height: 80%;
-  object-fit: cover;
-}
-
-.option p {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: bold;
-}
-
-.option.selected {
-  border-color: #1a73e8;
-}
-
-
-.activity-card {
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  overflow: hidden;
-  margin: 1rem;
-  cursor: pointer;
-  transition: transform 0.2s;
-}
-
-.activity-card:hover {
-  transform: scale(1.03);
-}
-
-.activity-card img {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-}
-
-.activity-info {
-  padding: 0.5rem;
-  text-align: left;
-}
-
-.activity-info h3 {
-  margin: 0.5rem 0;
-  font-size: 1.2rem;
-}
-
-.tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.tag {
-  background-color: #eee;
-  padding: 0.3rem 0.5rem;
-  border-radius: 16px;
-  font-size: 0.9rem;
-  color: #333;
-}
-
-.add-activity {
-  padding: 2rem;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.breadcrumb {
-  margin-bottom: 2rem;
-  color: #666;
-}
-
-.form-group {
-  margin-bottom: 1.5rem;
-}
-
-.input-field,
-.select-field,
-.textarea-field {
+.btn {
   width: 100%;
   padding: 0.8rem;
-  border: 1px solid #ddd;
+  border: none;
   border-radius: 6px;
-  font-size: 1rem;
-}
-
-.textarea-field {
-  min-height: 100px;
-  resize: vertical;
-}
-
-.image-upload {
-  margin-bottom: 1.5rem;
-}
-
-.upload-button {
-  display: block;
-  width: 100%;
-  height: 200px;
-  border: 2px dashed #ddd;
-  border-radius: 8px;
+  font-size: 1.2rem;
+  font-weight: bold;
   cursor: pointer;
-  transition: border-color 0.3s;
+  transition: transform 0.3s, background-color 0.3s;
 }
 
-.upload-button:hover {
-  border-color: #1a73e8;
+.btn.primary {
+  background-color: #1a73e8;
+  color: white;
 }
 
-.upload-placeholder {
+.btn.primary:hover {
+  background-color: #155ab2;
+  transform: scale(1.05);
+}
+
+.btn.secondary {
+  background-color: #f0f0f0;
+  color: #555;
+}
+
+.btn.secondary:hover {
+  background-color: #ddd;
+  transform: scale(1.05);
+}
+
+.btn.google {
+  background-color: #db4437;
+  color: white;
+}
+
+.btn.google:hover {
+  background-color: #a9372c;
+  transform: scale(1.05);
+}
+
+/* Floating Images */
+.floating-images {
+  position: fixed; /* Ensures images are outside the white box */
+  top: 0;
+  left: 0;
+  width: 100%;
   height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: #666;
+  pointer-events: none; /* Prevent blocking button clicks */
+  z-index: 1;
 }
 
-.upload-placeholder span {
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
+.floating-image {
+  position: absolute;
+  width: 240px; /* Increased by 50% */
+  height: 240px; /* Increased by 50% */
+  border-radius: 12px;
+  overflow: hidden;
+  animation: float 10s ease-in-out infinite;
 }
 
-.image-preview {
+.floating-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: 12px;
 }
 
-.submit-button {
-  width: 100%;
-  padding: 1rem;
-  background-color: #1a73e8;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 1.1rem;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.submit-button:hover {
-  background-color: #155ab2;
+/* Animation for floating images */
+@keyframes float {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-20px) scale(1.05);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+  }
 }
