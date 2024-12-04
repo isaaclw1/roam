@@ -10,6 +10,7 @@ function Homepage() {
     const navigate = useNavigate();
     const [activities, setActivities] = useState([]);
     const [selectedCities, setSelectedCities] = useState([]);
+    const [selectedInterests, setSelectedInterests] = useState([]);
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -43,7 +44,6 @@ function Homepage() {
                 const citiesQuery = query(citiesRef, where('userId', '==', currentUser.uid));
                 const citiesSnapshot = await getDocs(citiesQuery);
 
-                // Flatten and filter for unique cities
                 const citiesData = Array.from(
                     new Set(
                         citiesSnapshot.docs
@@ -53,6 +53,17 @@ function Homepage() {
                 );
 
                 setSelectedCities(citiesData);
+
+                // Fetch Selected Interests
+                const interestsRef = collection(db, 'interests');
+                const interestsQuery = query(interestsRef, where('userId', '==', currentUser.uid));
+                const interestsSnapshot = await getDocs(interestsQuery);
+
+                const interestsData = interestsSnapshot.docs
+                    .flatMap((doc) => doc.data().selectedActivities)
+                    .filter((interest, index, self) => self.indexOf(interest) === index); // Filter for unique interests
+
+                setSelectedInterests(interestsData);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -89,10 +100,25 @@ function Homepage() {
                         You currently don't have any selected cities!
                     </div>
                 ) : (
-                    <div className="city-selection-list">
+                    <div className="selection-list">
                         {selectedCities.map((city, index) => (
-                            <div key={index} className="city-selection-item">
+                            <div key={index} className="selection-item">
                                 <p>{city}</p>
+                            </div>
+                        ))}
+                    </div>
+                )}
+
+                <h2>Your Selected Interests</h2>
+                {selectedInterests.length === 0 ? (
+                    <div className="no-interests-message">
+                        You currently don't have any selected interests!
+                    </div>
+                ) : (
+                    <div className="selection-list">
+                        {selectedInterests.map((interest, index) => (
+                            <div key={index} className="selection-item">
+                                <p>{interest}</p>
                             </div>
                         ))}
                     </div>
